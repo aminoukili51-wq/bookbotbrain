@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>BoostBrain Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: white;
+            padding: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 250px;
+            background: #222;
+            color: white;
+            border: 1px solid #444;
+            padding: 10px;
+        }
+        button {
+            padding: 12px 20px;
+            background: #00aaff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #222;
+            border: 1px solid #444;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<h1>BoostBrain – Rocket League Analyzer</h1>
+
+<p>Plak hier je JSON stats:</p>
+
+<textarea id="jsonInput">
+{
+  "game_length": 300,
+  "score": { "team_goals": 3, "opponent_goals": 2 },
+  "shots": { "player": 5, "team": 10, "opponents": 8 },
+  "boost_usage": { "average": 0.6, "wasted": 0.2, "big_pads_taken": 15, "small_pads_taken": 40 },
+  "positioning": { "time_in_attack": 0.55, "time_in_defense": 0.45, "third_man_time": 0.3, "double_commits": 1, "back_post_rotations": 0.8 },
+  "speed": { "slow_speed": 0.2, "medium_speed": 0.5, "supersonic": 0.3 },
+  "pressure": { "offense_time": 0.6, "defense_time": 0.4, "demos_taken": 1, "demos_given": 2 },
+  "mistakes": { "overcommits": 1, "missed_boosts": 2, "bad_challenges": 1 }
+}
+</textarea>
+
+<button onclick="analyze()">Analyze</button>
+
+<div id="result"></div>
+
+<script>
+async function analyze() {
+    const input = document.getElementById("jsonInput").value;
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: input
+        });
+
+        const data = await response.json();
+        document.getElementById("result").innerText = JSON.stringify(data, null, 2);
+
+    } catch (err) {
+        document.getElementById("result").innerText = "Error: " + err;
+    }
+}
+</script>
+
+</body>
+</html>
